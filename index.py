@@ -119,7 +119,7 @@ def process_pdf():
     footer_text = f"{name} {roll_no}"
     
     # File paths
-    input_path = "private.pdf"  # Make sure this file exists in your directory
+    input_path = "private_compressed.pdf"  # Make sure this file exists in your directory
     temp_file = "temp_processed.pdf"
     output_path = "FinalOutput.pdf"
     
