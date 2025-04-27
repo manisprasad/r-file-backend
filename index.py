@@ -10,8 +10,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app) 
 
-
-def update_first_page(input_pdf, temp_pdf, name="Manish Prasad", roll_no="41523056"):
+def update_first_page(input_pdf, name="Manish Prasad", roll_no="41523056"):
     reader = PdfReader(input_pdf)
     writer = PdfWriter()
     
@@ -56,11 +55,14 @@ def update_first_page(input_pdf, temp_pdf, name="Manish Prasad", roll_no="415230
     for page in reader.pages[1:]:
         writer.add_page(page)
     
-    # Save temporary output
-    with open(temp_pdf, "wb") as f:
-        writer.write(f)
+    # Return the file in memory
+    output_pdf = BytesIO()
+    writer.write(output_pdf)
+    output_pdf.seek(0)
+    
+    return output_pdf
 
-def trim_and_add_text(input_pdf, output_pdf, text="Manish Prasad 41523056"):
+def trim_and_add_text(input_pdf, text="Manish Prasad 41523056"):
     reader = PdfReader(input_pdf)
     writer = PdfWriter()
 
@@ -104,11 +106,12 @@ def trim_and_add_text(input_pdf, output_pdf, text="Manish Prasad 41523056"):
 
         writer.add_page(page)
 
-    # Write the output file
-    with open(output_pdf, "wb") as output_file:
-        writer.write(output_file)
+    # Return the final PDF in memory
+    output_pdf = BytesIO()
+    writer.write(output_pdf)
+    output_pdf.seek(0)
 
-
+    return output_pdf
 
 @app.route('/process-pdf', methods=['POST'])
 def process_pdf():
@@ -121,35 +124,24 @@ def process_pdf():
     roll_no = data['roll_no']
     footer_text = f"{name} {roll_no}"
     
-    # File paths
     input_path = "private.pdf"  # Make sure this file exists in your directory
-   temp_file = "/tmp/temp_processed.pdf"
-    output_path = "/tmp/FinalOutput.pdf"
     
     try:
-        # First create a temporary file with the first page updated
-        update_first_page(input_path, temp_file, name, roll_no)
+        # First create the updated PDF in memory
+        updated_pdf = update_first_page(input_path, name, roll_no)
         
         # Then process all pages with the trimming and footer
-        trim_and_add_text(temp_file, output_path, footer_text)
+        final_pdf = trim_and_add_text(updated_pdf, footer_text)
         
-        # Send the processed file
+        # Send the processed file directly to the frontend without saving on the backend
         return send_file(
-            output_path,
+            final_pdf,
             as_attachment=True,
             download_name=f"RFile_{name.replace(' ', '_')}_{roll_no}.pdf",
             mimetype='application/pdf'
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    finally:
-        # Clean up temporary files
-        for file_path in [temp_file, output_path]:
-            if os.path.exists(file_path):
-                try:
-                    os.remove(file_path)
-                except:
-                    pass
 
 if __name__ == '__main__':
     app.run(debug=True)
