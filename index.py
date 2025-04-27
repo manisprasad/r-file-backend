@@ -107,6 +107,11 @@ def trim_and_add_text(input_pdf, output_pdf, text="Vaibhav Prasad 41523056"):
     with open(output_pdf, "wb") as output_file:
         writer.write(output_file)
 
+
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({"message": "Welcome to the PDF Processing API!"})
+
 @app.route('/process-pdf', methods=['POST'])
 def process_pdf():
     # Get data from request
