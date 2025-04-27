@@ -123,8 +123,8 @@ def process_pdf():
     
     # File paths
     input_path = "private.pdf"  # Make sure this file exists in your directory
-    temp_file = "temp_processed.pdf"
-    output_path = "FinalOutput.pdf"
+   temp_file = "/tmp/temp_processed.pdf"
+    output_path = "/tmp/FinalOutput.pdf"
     
     try:
         # First create a temporary file with the first page updated
