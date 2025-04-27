@@ -10,6 +10,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app) 
 
+
 def update_first_page(input_pdf, temp_pdf, name="Manish Prasad", roll_no="41523056"):
     reader = PdfReader(input_pdf)
     writer = PdfWriter()
@@ -59,7 +60,7 @@ def update_first_page(input_pdf, temp_pdf, name="Manish Prasad", roll_no="415230
     with open(temp_pdf, "wb") as f:
         writer.write(f)
 
-def trim_and_add_text(input_pdf, output_pdf, text="Vaibhav Prasad 41523056"):
+def trim_and_add_text(input_pdf, output_pdf, text="Manish Prasad 41523056"):
     reader = PdfReader(input_pdf)
     writer = PdfWriter()
 
@@ -108,9 +109,6 @@ def trim_and_add_text(input_pdf, output_pdf, text="Vaibhav Prasad 41523056"):
         writer.write(output_file)
 
 
-@app.route('/', methods=['GET'])
-def index():
-    return jsonify({"message": "Welcome to the PDF Processing API!"})
 
 @app.route('/process-pdf', methods=['POST'])
 def process_pdf():
@@ -124,7 +122,7 @@ def process_pdf():
     footer_text = f"{name} {roll_no}"
     
     # File paths
-    input_path = "private_compressed.pdf"  # Make sure this file exists in your directory
+    input_path = "private.pdf"  # Make sure this file exists in your directory
     temp_file = "temp_processed.pdf"
     output_path = "FinalOutput.pdf"
     
@@ -139,7 +137,7 @@ def process_pdf():
         return send_file(
             output_path,
             as_attachment=True,
-            download_name=f"processed_{name.replace(' ', '_')}_{roll_no}.pdf",
+            download_name=f"RFile_{name.replace(' ', '_')}_{roll_no}.pdf",
             mimetype='application/pdf'
         )
     except Exception as e:
