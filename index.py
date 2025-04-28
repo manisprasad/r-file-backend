@@ -122,7 +122,7 @@ def process_pdf():
     
     name = data['name']
     roll_no = data['roll_no']
-    footer_text = f"{name}"
+    footer_text = f"{name}  {roll_no}"
     
     input_path = "private.pdf"  # Make sure this file exists in your directory
     
